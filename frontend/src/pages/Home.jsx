@@ -6,12 +6,10 @@ import toast from "react-hot-toast";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-const formatCurrency = (amount) =>
-  new Intl.NumberFormat("id-ID", {
-    style: "currency",
-    currency: "IDR",
-    minimumFractionDigits: 0,
-  }).format(amount);
+const formatRibuan = (angka) => {
+  if (!angka && angka !== 0) return "0";
+  return new Intl.NumberFormat("id-ID").format(angka);
+};
 
 const formatDate = (dateStr) =>
   new Date(dateStr).toLocaleString("id-ID", {
@@ -156,8 +154,6 @@ const EmptyState = () => (
   </div>
 );
 
-
-
 // ─── Main Component ──────────────────────────────────────────────────────────
 
 const Home = () => {
@@ -195,7 +191,11 @@ const Home = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm(`Apakah Anda yakin ingin menghapus transaksi #${id}? Tindakan ini tidak dapat dibatalkan.`)) {
+    if (
+      window.confirm(
+        `Apakah Anda yakin ingin menghapus transaksi #${id}? Tindakan ini tidak dapat dibatalkan.`,
+      )
+    ) {
       try {
         await axios.delete(`http://localhost:5000/api/transactions/${id}`);
         toast.success("Transaksi berhasil dihapus!");
@@ -372,7 +372,7 @@ const Home = () => {
                                 fontFamily: "'JetBrains Mono', monospace",
                               }}
                             >
-                              {item.amount}
+                              {formatRibuan(item.amount)}
                             </span>
                           </td>
 
@@ -502,7 +502,9 @@ const Home = () => {
                       className="text-slate-400 font-semibold font-mono"
                       style={{ fontFamily: "'JetBrains Mono', monospace" }}
                     >
-                      {items.reduce((s, i) => s + Number(i.amount), 0)}
+                      {formatRibuan(
+                        items.reduce((s, i) => s + Number(i.amount), 0),
+                      )}
                     </span>
                   </span>
                 </div>
@@ -521,9 +523,11 @@ const Home = () => {
                 className="text-slate-400 font-semibold"
                 style={{ fontFamily: "'JetBrains Mono', monospace" }}
               >
-                {Object.values(groupedData)
-                  .flat()
-                  .reduce((s, i) => s + Number(i.amount), 0)}
+                {formatRibuan(
+                  Object.values(groupedData)
+                    .flat()
+                    .reduce((s, i) => s + Number(i.amount), 0),
+                )}
               </span>
             </span>
           </div>

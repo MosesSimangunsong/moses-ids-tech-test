@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import StatusBadge from "../components/StatusBadge"; 
+import toast from "react-hot-toast";
 
 const AddData = () => {
   const navigate = useNavigate();
@@ -32,18 +33,18 @@ const AddData = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      // Data yang dikirim ke backend sudah tidak mengandung ID
-      await axios.post("http://localhost:5000/api/transactions", formData);
-      navigate("/");
-    } catch (error) {
-      console.error("Gagal menambah data:", error);
-      alert("Gagal menambah data. Pastikan koneksi server lancar.");
-      setLoading(false);
-    }
-  };
+  e.preventDefault();
+  setLoading(true);
+  try {
+    await axios.post("http://localhost:5000/api/transactions", formData);
+    toast.success("Transaksi baru berhasil ditambahkan!"); // <-- Menggantikan alert
+    navigate("/");
+  } catch (error) {
+    console.error("Gagal menambah data:", error);
+    toast.error("Gagal menyimpan. Pastikan koneksi server lancar."); // <-- Menggantikan alert
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[#0a0f1e] text-slate-200 py-12 px-4 sm:px-6 flex justify-center items-start font-sans">

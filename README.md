@@ -36,3 +36,6 @@ progres endpoint backend (get,post,put)
 # backend
 1. memperbaiki logika id agar increment dari nomor paling kecil. karena sudah mengonsumsi data dari yang diberikan sebelumnya, maka id akan dimulai dari angka paling kecil dari data +1
 2. menambahkan method delete untuk hapus data
+
+# frontend
+1. menambahkan notifikasi untuk setiap kali pengguna berhasil ataupun gagal untuk mengedit maupun menambahkan data
