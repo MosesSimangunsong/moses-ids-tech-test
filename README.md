@@ -24,3 +24,15 @@ On Progress (Setup Project)
 
 ## backend
 progres endpoint backend (get,post,put)
+
+
+# frontend
+1.mengerjakan front end dengan membuat beberapa page penting untuk case menambah, mengedit, dan untuk lihat detail data
+2.membuat component agar bisa digunakan berulang ulang. yaitu transaction table dan juga badge sukses dan tidak sukses nya
+3.menginstall tailwind
+4.menggunakan tailwind agar tampilan lebih modern dan lebih bagus
+
+
+# backend
+1. memperbaiki logika id agar increment dari nomor paling kecil. karena sudah mengonsumsi data dari yang diberikan sebelumnya, maka id akan dimulai dari angka paling kecil dari data +1
+2. menambahkan method delete untuk hapus data

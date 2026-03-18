@@ -60,18 +60,28 @@ app.get('/api/transactions/:id', async (req, res) => {
 // post untuk menambah data baru
 app.post('/api/transactions', async (req, res) => {
     try {
-        const { id, productID, productName, amount, customerName, status, transactionDate, createBy, createOn } = req.body;
-        
+        const { productID, productName, amount, customerName, status, transactionDate } = req.body;
+
+        // 1. Cari ID paling besar di database saat ini, lalu tambah 1
+        const maxIdResult = await pool.query('SELECT COALESCE(MAX(id), 0) + 1 AS next_id FROM transactions');
+        const nextId = maxIdResult.rows[0].next_id;
+
+        // 2. Masukkan data dengan ID baru tersebut
         const query = `
-            INSERT INTO transactions (id, productID, productName, amount, customerName, status, transactionDate, createBy, createOn) 
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *
+            INSERT INTO transactions 
+            (id, productID, productName, amount, customerName, status, transactionDate, createBy, createOn) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW()) 
+            RETURNING *
         `;
-        const values = [id, productID, productName, amount, customerName, status, transactionDate, createBy, createOn];
+        // Hardcode createBy "Moses" untuk sementara sesuai kebutuhan test
+        const values = [nextId, productID, productName, amount, customerName, status, transactionDate, 'Moses'];
         
         const result = await pool.query(query, values);
-        res.status(201).json({ success: true, message: "Data berhasil ditambahkan", data: result.rows[0] });
+
+        res.json({ success: true, message: "Data berhasil ditambahkan", data: result.rows[0] });
     } catch (err) {
-        res.status(500).json({ success: false, message: err.message });
+        console.error("Error saat insert data:", err.message);
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
     }
 });
 
@@ -98,6 +108,24 @@ app.put('/api/transactions/:id', async (req, res) => {
         res.status(500).json({ success: false, message: err.message });
     }
 });
+
+// delete untuk hapus data
+app.delete('/api/transactions/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await pool.query('DELETE FROM transactions WHERE id = $1', [id]);
+        
+        if (result.rowCount === 0) {
+            return res.status(404).json({ success: false, message: "Data tidak ditemukan" });
+        }
+        
+        res.json({ success: true, message: "Data berhasil dihapus" });
+    } catch (err) {
+        console.error("Error saat menghapus data:", err.message);
+        res.status(500).json({ success: false, message: "Terjadi kesalahan server" });
+    }
+});
+
 
 // menjalankan server
 app.listen(port, () => {
