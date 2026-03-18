@@ -20,3 +20,7 @@ Project untuk tech test untuk PT Inovasi Daya Solusi.
 On Progress (Setup Project)
 1.setup node.js 
 2.setup react.js untuk frontend nya beserta npm install untuk install depedency
+
+
+## backend
+progres endpoint backend (get,post,put)
