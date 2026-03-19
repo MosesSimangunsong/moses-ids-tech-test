@@ -15,7 +15,7 @@ const EditData = () => {
     const fetchDetail = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/transactions/${id}`
+          `http://localhost:5000/api/transactions/${id}`,
         );
         const data = response.data.data;
         if (data.transactiondate) {
@@ -52,21 +52,32 @@ const EditData = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // ─── LOGIKA VALIDASI KOLOM WAJIB ───
+    const { productID, productName, amount, customerName, transactionDate } =
+      formData;
+
+    // Jika ada salah satu kolom yang masih kosong
+    if (
+      !productID ||
+      !productName ||
+      !amount ||
+      !customerName ||
+      !transactionDate
+    ) {
+      toast.error("Harap isi semua kolom data transaksi!");
+      return; // Hentikan eksekusi, jangan lanjut ke backend
+    }
+    // ───────────────────────────────────
+
     setLoading(true);
     try {
-      await axios.put(`http://localhost:5000/api/transactions/${id}`, {
-        productID: formData.productid,
-        productName: formData.productname,
-        amount: formData.amount,
-        customerName: formData.customername,
-        status: formData.status,
-        transactionDate: formData.transactiondate,
-      });
-      toast.success("Perubahan data berhasil disimpan!");
+      await axios.post("http://localhost:5000/api/transactions", formData);
+      toast.success("Transaksi baru berhasil ditambahkan!");
       navigate("/");
     } catch (error) {
-      console.error("Gagal mengubah data:", error);
-      toast.error("Gagal memperbarui data transaksi.");
+      console.error("Gagal menambah data:", error);
+      toast.error("Gagal menyimpan. Pastikan koneksi server lancar.");
       setLoading(false);
     }
   };
@@ -96,14 +107,24 @@ const EditData = () => {
             to="/"
             className="p-2 rounded-lg bg-slate-800/50 hover:bg-slate-700 text-slate-400 hover:text-slate-200 transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </Link>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-5 relative z-10" noValidate>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div className="space-y-1.5">
               <label className="text-sm font-medium text-slate-300">
@@ -184,13 +205,27 @@ const EditData = () => {
               <div className="flex items-center gap-4 pt-1">
                 <label className="cursor-pointer">
                   {/* Gunakan String() untuk berjaga-jaga jika backend mengirim angka 0 bukan string "0" */}
-                  <input type="radio" name="status" value="0" checked={String(formData.status) === "0"} onChange={handleChange} className="peer sr-only" />
+                  <input
+                    type="radio"
+                    name="status"
+                    value="0"
+                    checked={String(formData.status) === "0"}
+                    onChange={handleChange}
+                    className="peer sr-only"
+                  />
                   <div className="transition-all duration-200 opacity-50 grayscale peer-checked:opacity-100 peer-checked:grayscale-0 peer-checked:scale-105 peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#0a0f1e] peer-focus-visible:ring-indigo-500 rounded-full">
                     <StatusBadge status="SUCCESS" />
                   </div>
                 </label>
                 <label className="cursor-pointer">
-                  <input type="radio" name="status" value="1" checked={String(formData.status) === "1"} onChange={handleChange} className="peer sr-only" />
+                  <input
+                    type="radio"
+                    name="status"
+                    value="1"
+                    checked={String(formData.status) === "1"}
+                    onChange={handleChange}
+                    className="peer sr-only"
+                  />
                   <div className="transition-all duration-200 opacity-50 grayscale peer-checked:opacity-100 peer-checked:grayscale-0 peer-checked:scale-105 peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-[#0a0f1e] peer-focus-visible:ring-indigo-500 rounded-full">
                     <StatusBadge status="FAILED" />
                   </div>

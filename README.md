@@ -39,3 +39,6 @@ progres endpoint backend (get,post,put)
 
 # frontend
 1. menambahkan notifikasi untuk setiap kali pengguna berhasil ataupun gagal untuk mengedit maupun menambahkan data
+
+# frontend
+1. tambah notifikasi untuk pengguna yang tidak mengisi kolom yang harusnya wajib diisi
