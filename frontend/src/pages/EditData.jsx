@@ -53,31 +53,31 @@ const EditData = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // ─── LOGIKA VALIDASI KOLOM WAJIB ───
-    const { productID, productName, amount, customerName, transactionDate } =
-      formData;
-
-    // Jika ada salah satu kolom yang masih kosong
-    if (
-      !productID ||
-      !productName ||
-      !amount ||
-      !customerName ||
-      !transactionDate
-    ) {
-      toast.error("Harap isi semua kolom data transaksi!");
-      return; // Hentikan eksekusi, jangan lanjut ke backend
+    // ─── LOGIKA VALIDASI KHUSUS EDIT (Menggunakan huruf kecil dari database) ───
+    const { productid, productname, amount, customername, transactiondate } = formData;
+    
+    // Mengecek apakah ada kolom yang sengaja dihapus sampai kosong oleh user
+    if (!productid || !productname || !amount || !customername || !transactiondate) {
+      toast.error("Harap pastikan tidak ada kolom yang dibiarkan kosong!");
+      return; // Hentikan proses simpan
     }
-    // ───────────────────────────────────
+    // ────────────────────────────────────────────────────────────────────────
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:5000/api/transactions", formData);
-      toast.success("Transaksi baru berhasil ditambahkan!");
+      await axios.put(`http://localhost:5000/api/transactions/${id}`, {
+        productID: productid,
+        productName: productname,
+        amount: amount,
+        customerName: customername,
+        status: formData.status,
+        transactionDate: transactiondate,
+      });
+      toast.success("Perubahan data berhasil disimpan!");
       navigate("/");
     } catch (error) {
-      console.error("Gagal menambah data:", error);
-      toast.error("Gagal menyimpan. Pastikan koneksi server lancar.");
+      console.error("Gagal mengubah data:", error);
+      toast.error("Gagal memperbarui data transaksi.");
       setLoading(false);
     }
   };
